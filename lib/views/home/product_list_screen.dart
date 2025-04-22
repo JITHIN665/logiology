@@ -5,9 +5,11 @@ import 'package:get/get.dart';
 import 'package:logiology/controllers/product_controller.dart';
 import 'package:logiology/controllers/profile_controller.dart';
 import 'package:logiology/utils/routes.dart';
+import 'package:logiology/views/home/widgets/product_shimmer_card.dart';
 import 'package:logiology/views/widgets/custom_search_bar.dart';
 import 'package:logiology/views/widgets/filter_bottom_sheet.dart';
 import 'package:logiology/views/home/widgets/product_card.dart';
+import 'package:logiology/views/widgets/no_data_widget.dart';
 
 class ProductListScreen extends StatelessWidget {
   final ProductController _controller = Get.find();
@@ -31,7 +33,7 @@ class ProductListScreen extends StatelessWidget {
                 backgroundImage:
                     _profileController.profileImagePath.isNotEmpty
                         ? FileImage(File(_profileController.profileImagePath.value))
-                        : const AssetImage('assets/default_profile.png') as ImageProvider,
+                        : const AssetImage('assets/icon/no_profile_picture_icon.png') as ImageProvider,
               ),
             );
           }),
@@ -52,10 +54,20 @@ class ProductListScreen extends StatelessWidget {
           Expanded(
             child: Obx(() {
               if (_controller.isLoading.value) {
-                return const Center(child: CircularProgressIndicator());
+                return GridView.builder(
+                  padding: const EdgeInsets.all(8),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 0.7,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                  ),
+                  itemCount: 6,
+                  itemBuilder: (_, __) => const ProductShimmerCard(),
+                );
               }
               return _controller.filteredProducts.isEmpty
-                  ? const Center(child: Text('No products found'))
+                  ? const NoDataWidget(message: "No products found")
                   : GridView.builder(
                     padding: const EdgeInsets.all(8),
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

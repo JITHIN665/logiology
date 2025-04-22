@@ -15,30 +15,32 @@ class LoginScreen extends StatelessWidget {
     final AuthController authController = Get.find();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const FlutterLogo(size: 100),
+            Image.asset("assets/icon/lo.png"),
             const SizedBox(height: 30),
             CustomTextField(controller: usernameController, labelText: 'Username', prefixIcon: Icons.person),
             const SizedBox(height: 16),
             CustomTextField(controller: passwordController, labelText: 'Password', prefixIcon: Icons.lock, obscureText: true),
             const SizedBox(height: 24),
             Obx(
-              () => CustomButton(
-                onPressed:
-                    authController.isLoading.value
-                        ? null
-                        : () {
-                          authController.login(usernameController.text.trim(), passwordController.text.trim());
-                        },
-                child:
-                    authController.isLoading.value
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text('Login', style: TextStyle(color: Colors.white)),
+              () => SizedBox(
+                width: double.infinity,
+                child: CustomButton(
+                  onPressed:
+                      authController.isLoading.value
+                          ? null
+                          : () {
+                            authController.login(usernameController.text.trim(), passwordController.text.trim());
+                          },
+                  child:
+                      authController.isLoading.value
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : const Text('Login', style: TextStyle(color: Colors.white)),
+                ),
               ),
             ),
           ],

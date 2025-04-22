@@ -29,7 +29,7 @@ class ProfileScreen extends StatelessWidget {
                       backgroundImage:
                           _profileController.profileImagePath.isNotEmpty
                               ? FileImage(File(_profileController.profileImagePath.value))
-                              : const AssetImage('assets/default_profile.png') as ImageProvider,
+                              : const AssetImage('assets/icon/no_profile_picture_icon.png') as ImageProvider,
                     ),
                     Positioned(
                       bottom: 0,
@@ -90,9 +90,22 @@ class ProfileScreen extends StatelessWidget {
                 onChanged: (val) => _profileController.confirmPassword.value = val,
               ),
               const SizedBox(height: 24),
-              CustomButton(onPressed: _profileController.saveProfile, child: const Text('Save Changes')),
+              SizedBox(
+                width: double.infinity,
+                child: CustomButton(
+                  onPressed: _profileController.saveProfile,
+                  child: const Text('Save Changes', style: TextStyle(color: Colors.white)),
+                ),
+              ),
               const SizedBox(height: 20),
-              CustomButton(onPressed: _authController.logout, child: const Text('Logout')),
+              SizedBox(
+                width: double.infinity,
+                child: CustomButton(
+                  backgroundColor: Colors.red,
+                  onPressed: _authController.logout,
+                  child: const Text('Logout', style: TextStyle(color: Colors.white)),
+                ),
+              ),
             ],
           );
         }),
