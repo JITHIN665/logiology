@@ -26,19 +26,19 @@ class FilterBottomSheet extends StatelessWidget {
               const SizedBox(height: 16),
               const Text('Categories', style: TextStyle(fontWeight: FontWeight.bold)),
               MultiSelectDropdown(
-                items: _controller.categories,
+                items: _controller.availableCategories,
                 selectedItems: _controller.selectedCategories,
                 onSelectionChanged: (selected) {
-                  _controller.applyFilters();
+                  _controller.applyProductFilters();
                 },
               ),
               const SizedBox(height: 16),
               const Text('Tags', style: TextStyle(fontWeight: FontWeight.bold)),
               MultiSelectDropdown(
-                items: _controller.tags,
+                items: _controller.availableTags,
                 selectedItems: _controller.selectedTags,
                 onSelectionChanged: (selected) {
-                  _controller.applyFilters();
+                  _controller.applyProductFilters();
                 },
               ),
               const SizedBox(height: 16),
@@ -49,10 +49,10 @@ class FilterBottomSheet extends StatelessWidget {
                     child: CustomTextField(
                       labelText: 'Min Price',
                       keyboardType: TextInputType.number,
-                      initialValue: _controller.minPrice.value.toStringAsFixed(2),
+                      initialValue: _controller.minSelectedPrice.value.toStringAsFixed(2),
                       onChanged: (value) {
                         final newValue = double.tryParse(value) ?? 0;
-                        _controller.minPrice.value = newValue;
+                        _controller.minSelectedPrice.value = newValue;
                       },
                     ),
                   ),
@@ -61,10 +61,10 @@ class FilterBottomSheet extends StatelessWidget {
                     child: CustomTextField(
                       labelText: 'Max Price',
                       keyboardType: TextInputType.number,
-                      initialValue: _controller.maxPrice.value.toStringAsFixed(2),
+                      initialValue: _controller.maxSelectedPrice.value.toStringAsFixed(2),
                       onChanged: (value) {
                         final newValue = double.tryParse(value) ?? 1000;
-                        _controller.maxPrice.value = newValue;
+                        _controller.maxSelectedPrice.value = newValue;
                       },
                     ),
                   ),
@@ -75,7 +75,7 @@ class FilterBottomSheet extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () {
-                    _controller.applyFilters();
+                    _controller.applyProductFilters();
                   },
                   child: const Text('Apply Price Filter'),
                 ),
@@ -86,21 +86,21 @@ class FilterBottomSheet extends StatelessWidget {
                   Expanded(
                     child: CustomButton(
                       onPressed: () {
-                        _controller.resetFilters();
+                        _controller.clearAllFilters();
                         Get.back();
                       },
                       backgroundColor: Colors.grey,
-                      child: const Text('Reset'),
+                      child: const Text('Reset', style: TextStyle(color: Colors.white)),
                     ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: CustomButton(
                       onPressed: () {
-                        _controller.applyFilters();
+                        _controller.applyProductFilters();
                         Get.back();
                       },
-                      child: const Text('Apply'),
+                      child: const Text('Apply', style: TextStyle(color: Colors.white)),
                     ),
                   ),
                 ],

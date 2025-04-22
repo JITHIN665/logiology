@@ -5,85 +5,97 @@ import 'package:logiology/services/api_service.dart';
 class ProductController extends GetxController {
   final ApiService _apiService = Get.find();
 
-  final RxList<Product> products = <Product>[].obs;
-  final RxList<Product> filteredProducts = <Product>[].obs;
-  final RxList<String> categories = <String>[].obs;
-  final RxList<String> tags = <String>[].obs;
+  final RxList<Product> allProducts = <Product>[].obs;
+  final RxList<Product> displayedProducts = <Product>[].obs;
+
+  final RxList<String> availableCategories = <String>[].obs;
+  final RxList<String> availableTags = <String>[].obs;
+
   final RxList<String> selectedCategories = <String>[].obs;
   final RxList<String> selectedTags = <String>[].obs;
-  final RxDouble minPrice = 0.0.obs;
-  final RxDouble maxPrice = 1000.0.obs;
-  late final RxString searchQuery = ''.obs;
+
+  final RxDouble minSelectedPrice = 0.0.obs;
+  final RxDouble maxSelectedPrice = 1000.0.obs;
+
+  final RxString searchKeyword = ''.obs;
   final RxBool isLoading = false.obs;
 
   @override
   void onInit() {
-    fetchAllProducts();
+    loadProducts();
     super.onInit();
   }
 
-  Future<void> fetchAllProducts() async {
+  ///
+  ///Load Products
+  ///
+  Future<void> loadProducts() async {
     try {
       isLoading.value = true;
-      final allProducts = await _apiService.fetchAllProducts();
 
-      products.assignAll(allProducts);
-      filteredProducts.assignAll(allProducts);
+      final products = await _apiService.fetchAllProducts();
+      allProducts.assignAll(products);
+      displayedProducts.assignAll(products);
 
-      // Extract unique categories and tags
-      categories.assignAll(allProducts.map((p) => p.category).toSet().toList());
+      availableCategories.assignAll(products.map((p) => p.category).toSet().toList());
+      availableTags.assignAll(products.expand((p) => p.tags).toSet().toList());
 
-      tags.assignAll(allProducts.expand((p) => p.tags).toSet().toList());
-
-      // Set initial price range
-      if (allProducts.isNotEmpty) {
-        final prices = allProducts.map((p) => p.price).toList();
-        minPrice.value = prices.reduce((a, b) => a < b ? a : b);
-        maxPrice.value = prices.reduce((a, b) => a > b ? a : b);
+      if (products.isNotEmpty) {
+        final prices = products.map((product) => product.price);
+        minSelectedPrice.value = prices.reduce((min, price) => price < min ? price : min);
+        maxSelectedPrice.value = prices.reduce((max, price) => price > max ? price : max);
       }
-    } catch (e) {
-      Get.snackbar("Error", "Failed to load products: ${e.toString()}");
+    } catch (error) {
+      Get.snackbar("Error", "Unable to fetch products: ${error.toString()}");
     } finally {
       isLoading.value = false;
     }
   }
 
-  void applyFilters() {
-    // Ensure max price is not less than min price
-    if (maxPrice.value < minPrice.value) {
-      final temp = maxPrice.value;
-      maxPrice.value = minPrice.value;
-      minPrice.value = temp;
+  ///
+  ///apply filter
+  ///
+  void applyProductFilters() {
+    if (maxSelectedPrice.value < minSelectedPrice.value) {
+      final tempPrice = maxSelectedPrice.value;
+      maxSelectedPrice.value = minSelectedPrice.value;
+      minSelectedPrice.value = tempPrice;
     }
 
-    filteredProducts.assignAll(
-      products.where((product) {
-        // Search filter
-        bool matchesSearch = searchQuery.isEmpty || product.title.toLowerCase().contains(searchQuery.toLowerCase());
+    displayedProducts.assignAll(
+      allProducts.where((product) {
+        final matchesSearch = searchKeyword.isEmpty ||
+            product.title.toLowerCase().contains(searchKeyword.toLowerCase());
 
-        // Category filter
-        bool matchesCategory = selectedCategories.isEmpty || selectedCategories.contains(product.category);
+        final matchesCategory = selectedCategories.isEmpty ||
+            selectedCategories.contains(product.category);
 
-        // Tag filter
-        bool matchesTag = selectedTags.isEmpty || product.tags.any((tag) => selectedTags.contains(tag));
+        final matchesTags = selectedTags.isEmpty ||
+            product.tags.any((tag) => selectedTags.contains(tag));
 
-        // Price filter
-        bool matchesPrice = product.price >= minPrice.value && product.price <= maxPrice.value;
+        final matchesPriceRange = product.price >= minSelectedPrice.value &&
+            product.price <= maxSelectedPrice.value;
 
-        return matchesSearch && matchesCategory && matchesTag && matchesPrice;
+        return matchesSearch && matchesCategory && matchesTags && matchesPriceRange;
       }),
     );
   }
 
-  void resetFilters() {
-    searchQuery.value = '';
+
+  ///
+  ///clear applied filter 
+  ///
+  void clearAllFilters() {
+    searchKeyword.value = '';
     selectedCategories.clear();
     selectedTags.clear();
-    if (products.isNotEmpty) {
-      final prices = products.map((p) => p.price).toList();
-      minPrice.value = prices.reduce((a, b) => a < b ? a : b);
-      maxPrice.value = prices.reduce((a, b) => a > b ? a : b);
+
+    if (allProducts.isNotEmpty) {
+      final prices = allProducts.map((product) => product.price);
+      minSelectedPrice.value = prices.reduce((min, price) => price < min ? price : min);
+      maxSelectedPrice.value = prices.reduce((max, price) => price > max ? price : max);
     }
-    filteredProducts.assignAll(products);
+
+    displayedProducts.assignAll(allProducts);
   }
 }

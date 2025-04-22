@@ -46,8 +46,8 @@ class ProductListScreen extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: CustomSearchBar(
               onChanged: (query) {
-                _controller.searchQuery.value = query;
-                _controller.applyFilters();
+                _controller.searchKeyword.value = query;
+                _controller.applyProductFilters();
               },
             ),
           ),
@@ -66,7 +66,7 @@ class ProductListScreen extends StatelessWidget {
                   itemBuilder: (_, __) => const ProductShimmerCard(),
                 );
               }
-              return _controller.filteredProducts.isEmpty
+              return _controller.displayedProducts.isEmpty
                   ? const NoDataWidget(message: "No products found")
                   : GridView.builder(
                     padding: const EdgeInsets.all(8),
@@ -76,9 +76,9 @@ class ProductListScreen extends StatelessWidget {
                       crossAxisSpacing: 8,
                       mainAxisSpacing: 8,
                     ),
-                    itemCount: _controller.filteredProducts.length,
+                    itemCount: _controller.displayedProducts.length,
                     itemBuilder: (context, index) {
-                      final product = _controller.filteredProducts[index];
+                      final product = _controller.displayedProducts[index];
                       return ProductCard(product: product, onTap: () => Get.toNamed(Routes.productDetail, arguments: product));
                     },
                   );
