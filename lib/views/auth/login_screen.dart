@@ -5,8 +5,8 @@ import 'package:logiology/views/widgets/custom_button.dart';
 import 'package:logiology/views/widgets/custom_textfield.dart';
 
 class LoginScreen extends StatelessWidget {
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   LoginScreen({super.key});
 
@@ -23,9 +23,9 @@ class LoginScreen extends StatelessWidget {
           children: [
             const FlutterLogo(size: 100),
             const SizedBox(height: 30),
-            CustomTextField(controller: _usernameController, labelText: 'Username', prefixIcon: Icons.person),
+            CustomTextField(controller: usernameController, labelText: 'Username', prefixIcon: Icons.person),
             const SizedBox(height: 16),
-            CustomTextField(controller: _passwordController, labelText: 'Password', prefixIcon: Icons.lock, obscureText: true),
+            CustomTextField(controller: passwordController, labelText: 'Password', prefixIcon: Icons.lock, obscureText: true),
             const SizedBox(height: 24),
             Obx(
               () => CustomButton(
@@ -33,7 +33,7 @@ class LoginScreen extends StatelessWidget {
                     authController.isLoading.value
                         ? null
                         : () {
-                          authController.login(_usernameController.text.trim(), _passwordController.text.trim());
+                          authController.login(usernameController.text.trim(), passwordController.text.trim());
                         },
                 child:
                     authController.isLoading.value

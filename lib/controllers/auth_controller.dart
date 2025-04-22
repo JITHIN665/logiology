@@ -8,7 +8,7 @@ class AuthController extends GetxController {
 
   Future<void> login(String username, String password) async {
     isLoading.value = true;
-    await Future.delayed(const Duration(milliseconds: 500)); // Simulate network delay
+    await Future.delayed(const Duration(milliseconds: 500));
     
     if (_authService.login(username, password)) {
       Get.offAllNamed(Routes.home);

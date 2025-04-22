@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:logiology/controllers/product_controller.dart';
+import 'package:logiology/controllers/profile_controller.dart';
 import 'package:logiology/utils/routes.dart';
 import 'package:logiology/views/widgets/custom_search_bar.dart';
 import 'package:logiology/views/widgets/filter_bottom_sheet.dart';
@@ -8,6 +11,7 @@ import 'package:logiology/views/home/widgets/product_card.dart';
 
 class ProductListScreen extends StatelessWidget {
   final ProductController _controller = Get.find();
+  final ProfileController _profileController = Get.find();
 
   ProductListScreen({super.key});
 
@@ -18,7 +22,20 @@ class ProductListScreen extends StatelessWidget {
         title: const Text('Products'),
         actions: [
           IconButton(icon: const Icon(Icons.filter_list), onPressed: () => Get.bottomSheet(FilterBottomSheet())),
-          IconButton(icon: const Icon(Icons.person), onPressed: () => Get.toNamed(Routes.profile)),
+          SizedBox(width: 16),
+          Obx(() {
+            return GestureDetector(
+              onTap: () => Get.toNamed(Routes.profile),
+              child: CircleAvatar(
+                radius: 15,
+                backgroundImage:
+                    _profileController.profileImagePath.isNotEmpty
+                        ? FileImage(File(_profileController.profileImagePath.value))
+                        : const AssetImage('assets/default_profile.png') as ImageProvider,
+              ),
+            );
+          }),
+          SizedBox(width: 16),
         ],
       ),
       body: Column(

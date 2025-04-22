@@ -3,9 +3,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:logiology/services/auth_service.dart';
 
 class ProfileController extends GetxController {
-  final AuthService _authService = Get.find();
+  final AuthService _authService = Get.find<AuthService>();
   final ImagePicker _picker = ImagePicker();
-  
+
   final RxString username = ''.obs;
   final RxString password = ''.obs;
   final RxString confirmPassword = ''.obs;
@@ -14,32 +14,38 @@ class ProfileController extends GetxController {
 
   @override
   void onInit() {
-    if (_authService.currentUser != null) {
-      username.value = _authService.currentUser!.username;
-      profileImagePath.value = _authService.currentUser!.profileImage ?? '';
-    }
     super.onInit();
+    final user = _authService.currentUser;
+    if (user != null) {
+      username.value = user.username;
+      profileImagePath.value = user.profileImage ?? '';
+    }
   }
 
-  Future<void> pickImage() async {
+  ///
+  /// Pick an image from gallery
+  ///
+  Future<void> pickImageFromGallery() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
       profileImagePath.value = image.path;
     }
   }
 
-  void toggleEditing() {
-    isEditing.value = !isEditing.value;
-    if (!isEditing.value) {
-      // Reset if cancel editing
-      username.value = _authService.currentUser!.username;
-      profileImagePath.value = _authService.currentUser!.profileImage ?? '';
-      password.value = '';
-      confirmPassword.value = '';
+  ///
+  /// Capture a new photo using camera
+  ///
+  Future<void> pickImageFromCamera() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+    if (image != null) {
+      profileImagePath.value = image.path;
     }
   }
 
-  void saveProfile() {
+  ///
+  /// Save changes
+  ///
+  Future<void> saveProfile() async {
     if (password.value.isNotEmpty && password.value != confirmPassword.value) {
       Get.snackbar('Error', 'Passwords do not match');
       return;
@@ -50,7 +56,7 @@ class ProfileController extends GetxController {
       password.value.isNotEmpty ? password.value : _authService.currentUser!.password,
       profileImagePath.value,
     );
-    
+
     isEditing.value = false;
     Get.snackbar('Success', 'Profile updated');
   }
