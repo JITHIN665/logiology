@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:logiology/models/product_model.dart';
+import 'package:logiology/utils/helper.dart';
 import 'package:logiology/views/widgets/custom_button.dart';
 
 class ProductDetailScreen extends StatelessWidget {
@@ -88,7 +89,7 @@ class ProductDetailScreen extends StatelessWidget {
                                 style: TextStyle(fontWeight: FontWeight.w700),
                               ),
                               SizedBox(height: 4),
-                              // Text(convertToMonthDayYear(dateTimeString: review.date) ?? "", style: TextStyle(fontSize: 12)),
+                              Text(dateFormatter(dateTimeString: review.date) ?? "", style: TextStyle(fontSize: 12)),
                               SizedBox(height: 4),
                               Text(review.comment ?? "", style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.w500)),
                               SizedBox(height: 10),
@@ -98,6 +99,12 @@ class ProductDetailScreen extends StatelessWidget {
                       )
                       .toList(),
             ),
+            const SizedBox(height: 20),
+            Text('Special information', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+            SizedBox(height: 8),
+            Text(product.warrantyInformation ?? "", style: Theme.of(context).textTheme.bodyMedium),
+            SizedBox(height: 4),
+            Text(product.returnPolicy ?? "", style: Theme.of(context).textTheme.bodyMedium),
             const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
