@@ -43,6 +43,7 @@ class FilterBottomSheet extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               const Text('Price Range', style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
               Row(
                 children: [
                   Expanded(
